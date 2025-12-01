@@ -1,0 +1,71 @@
+<div class="sidebar">
+    <div class="sidebar-brand">
+        <h2>
+            <i class="fas fa-mobile-alt me-2"></i>
+            Galugas Admin
+        </h2>
+        <small class="text-turquesa">Panel de Administración</small>
+    </div>
+    
+    <nav class="sidebar-nav">
+        <a href="/admin" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>">
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard
+            <span class="badge bg-turquesa">Home</span>
+        </a>
+        
+        <div class="sidebar-section">
+            <small class="text-uppercase text-muted px-3 mb-2">Gestión de Contenido</small>
+            
+            <a href="/admin/dispositivos" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'dispositivos' ? 'active' : '' %>">
+                <i class="fas fa-mobile-alt"></i>
+                Dispositivos
+                <span class="badge bg-primary">CRUD</span>
+            </a>
+            
+            <a href="/admin/categorias" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'categorias' ? 'active' : '' %>">
+                <i class="fas fa-tags"></i>
+                Categorías
+            </a>
+            
+            <a href="/admin/marcas" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'marcas' ? 'active' : '' %>">
+                <i class="fas fa-copyright"></i>
+                Marcas
+            </a>
+        </div>
+        
+        <div class="sidebar-section">
+            <small class="text-uppercase text-muted px-3 mb-2">Gestión de Usuarios</small>
+            
+            <a href="/admin/usuarios" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'usuarios' ? 'active' : '' %>">
+                <i class="fas fa-users"></i>
+                Usuarios
+                <span class="badge bg-success">Admin</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-section">
+            <small class="text-uppercase text-muted px-3 mb-2">Sistema</small>
+            
+            <a href="/admin/logs" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'logs' ? 'active' : '' %>">
+                <i class="fas fa-clipboard-list"></i>
+                Sistema de Logs
+                <span class="badge bg-warning">Audit</span>
+            </a>
+            
+            <a href="/admin/profile" class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'profile' ? 'active' : '' %>">
+                <i class="fas fa-user-cog"></i>
+                Mi Perfil
+            </a>
+        </div>
+    </nav>
+    
+    <div class="sidebar-footer mt-auto p-3">
+        <div class="text-center">
+            <small class="text-muted">Galugas v1.0.0</small><br>
+            <small class="text-turquesa">Panel Administrativo</small>
+        </div>
+    </div>
+</div>
+
+<div class="sidebar-overlay"></div>

@@ -1,0 +1,197 @@
+<%- include('../../partials/admin-header', { 
+    title: 'Gestión de Dispositivos',
+    activePage: 'dispositivos'
+}) %>
+
+<!-- Filtros -->
+<div class="admin-filters">
+    <form method="GET" class="filter-group">
+        <div class="filter-item">
+            <label class="form-label">Buscar</label>
+            <input type="text" name="search" class="form-control" placeholder="Nombre, marca..." value="<%= filters.search || '' %>">
+        </div>
+        <div class="filter-item">
+            <label class="form-label">Categoría</label>
+            <select name="categoria_id" class="form-select">
+                <option value="">Todas las categorías</option>
+                <% categorias.forEach(cat => { %>
+                <option value="<%= cat.categoria_id %>" <%= filters.categoria_id == cat.categoria_id ? 'selected' : '' %>>
+                    <%= cat.nombre %>
+                </option>
+                <% }); %>
+            </select>
+        </div>
+        <div class="filter-item">
+            <label class="form-label">Marca</label>
+            <select name="marca_id" class="form-select">
+                <option value="">Todas las marcas</option>
+                <% marcas.forEach(marca => { %>
+                <option value="<%= marca.marca_id %>" <%= filters.marca_id == marca.marca_id ? 'selected' : '' %>>
+                    <%= marca.nombre %>
+                </option>
+                <% }); %>
+            </select>
+        </div>
+        <div class="filter-item">
+            <label class="form-label">Estado</label>
+            <select name="estado_id" class="form-select">
+                <option value="">Todos los estados</option>
+                <option value="1" <%= filters.estado_id == '1' ? 'selected' : '' %>>Activo</option>
+                <option value="2" <%= filters.estado_id == '2' ? 'selected' : '' %>>Inactivo</option>
+            </select>
+        </div>
+        <div class="filter-item">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a href="/admin/dispositivos" class="btn btn-outline-secondary">Limpiar</a>
+        </div>
+    </form>
+</div>
+
+<!-- Tabla de Dispositivos -->
+<div class="admin-table-container">
+    <div class="admin-table-header">
+        <h3><i class="fas fa-mobile-alt me-2"></i>Lista de Dispositivos</h3>
+        <div class="table-actions">
+            <a href="/admin/dispositivos/crear" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Nuevo Dispositivo
+            </a>
+            <div class="input-group" style="width: 250px;">
+                <input type="text" class="form-control table-search" placeholder="Buscar en tabla...">
+                <button class="btn btn-outline-secondary" type="button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th data-sort>Imagen</th>
+                    <th data-sort>Nombre</th>
+                    <th data-sort>Marca</th>
+                    <th data-sort>Categoría</th>
+                    <th data-sort>Precio</th>
+                    <th data-sort>Stock</th>
+                    <th data-sort>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (dispositivos.length > 0) { %>
+                    <% dispositivos.forEach(dispositivo => { %>
+                    <tr>
+                        <td>
+                            <% if (dispositivo.pathFoto) { %>
+                                <img src="<%= dispositivo.imagen_url %>" alt="<%= dispositivo.nombre %>" 
+                                     class="rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                            <% } else { %>
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center" 
+                                     style="width: 50px; height: 50px;">
+                                    <i class="fas fa-mobile-alt text-muted"></i>
+                                </div>
+                            <% } %>
+                        </td>
+                        <td>
+                            <strong><%= dispositivo.nombre %></strong>
+                            <% if (dispositivo.promedio_calificacion) { %>
+                                <div class="small text-warning">
+                                    <i class="fas fa-star"></i> <%= dispositivo.promedio_calificacion.toFixed(1) %>
+                                </div>
+                            <% } %>
+                        </td>
+                        <td><%= dispositivo.marca_nombre %></td>
+                        <td>
+                            <span class="badge bg-info"><%= dispositivo.categoria_nombre %></span>
+                        </td>
+                        <td>
+                            <strong class="text-success">$<%= parseFloat(dispositivo.precio).toLocaleString('es-ES') %></strong>
+                        </td>
+                        <td>
+                            <% if (dispositivo.total_resenas > 0) { %>
+                                <span class="badge bg-primary"><%= dispositivo.total_resenas %> reseñas</span>
+                            <% } else { %>
+                                <span class="badge bg-secondary">Sin reseñas</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (dispositivo.estado_id === 1) { %>
+                                <span class="badge-admin badge-active">Activo</span>
+                            <% } else { %>
+                                <span class="badge-admin badge-inactive">Inactivo</span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="/producto/<%= dispositivo.dispositivo_id %>" 
+                                   class="btn-action btn-view" 
+                                   title="Ver en tienda" 
+                                   target="_blank">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                <a href="/admin/dispositivos/editar/<%= dispositivo.dispositivo_id %>" 
+                                   class="btn-action btn-edit" 
+                                   title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="/admin/dispositivos/eliminar/<%= dispositivo.dispositivo_id %>" 
+                                      method="POST" 
+                                      class="d-inline"
+                                      onsubmit="return confirm('¿Estás seguro de eliminar el dispositivo \\'<%= dispositivo.nombre %>\\'?')">
+                                    <button type="submit" class="btn-action btn-delete" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="8" class="text-center py-5">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No se encontraron dispositivos</h5>
+                            <p class="text-muted mb-0">
+                                <% if (Object.keys(filters).length > 0) { %>
+                                    Intenta con otros filtros o 
+                                <% } %>
+                                <a href="/admin/dispositivos/crear" class="text-primary">crea el primer dispositivo</a>
+                            </p>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    <% if (dispositivos.length > 0) { %>
+    <div class="p-3 border-top">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <small class="text-muted">
+                    Mostrando <strong><%= dispositivos.length %></strong> dispositivos
+                </small>
+            </div>
+            <div class="col-md-6">
+                <nav aria-label="Paginación de dispositivos">
+                    <ul class="pagination justify-content-end mb-0">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Siguiente</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <% } %>
+</div>
+
+<%- include('../../partials/admin-footer') %>

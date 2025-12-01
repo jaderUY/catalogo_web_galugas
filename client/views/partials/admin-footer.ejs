@@ -1,0 +1,66 @@
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Admin JS -->
+    <script src="/js/admin.js"></script>
+    <!-- Upload Preview JS -->
+    <script src="/js/upload-preview.js"></script>
+    
+    <script>
+        // Loading overlay para admin
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+        
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+        
+        // Toggle sidebar en móviles
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarOverlay = document.querySelector('.sidebar-overlay');
+            
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    if (sidebarOverlay) {
+                        sidebarOverlay.classList.toggle('active');
+                    }
+                });
+            }
+            
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', function() {
+                    sidebar.classList.remove('active');
+                    this.classList.remove('active');
+                });
+            }
+            
+            // Mostrar loading en formularios y enlaces
+            const forms = document.querySelectorAll('form');
+            const links = document.querySelectorAll('a[href]:not([target="_blank"])');
+            
+            forms.forEach(form => {
+                form.addEventListener('submit', function() {
+                    showLoading();
+                });
+            });
+            
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (this.getAttribute('href') !== '#' && !this.classList.contains('dropdown-toggle')) {
+                        showLoading();
+                    }
+                });
+            });
+            
+            // Ocultar loading cuando la página cargue
+            window.addEventListener('load', hideLoading);
+        });
+    </script>
+</body>
+</html>

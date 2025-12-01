@@ -1,0 +1,176 @@
+<%- include('../partials/header', { 
+    title: title,
+    meta: meta 
+}) %>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1>Tecnología que Inspira</h1>
+                    <p class="lead">
+                        Descubre los últimos dispositivos tecnológicos en Galugas. 
+                        Smartphones, tablets, accesorios y más, con la mejor calidad 
+                        y precios competitivos.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="/catalogo" class="btn btn-primary">
+                            <i class="fas fa-shopping-bag me-2"></i>Explorar Catálogo
+                        </a>
+                        <a href="/about" class="btn btn-secondary">
+                            <i class="fas fa-info-circle me-2"></i>Conocer Más
+                        </a>
+                    </div>
+                    <div class="mt-4">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <h4 class="text-turquesa mb-1">500+</h4>
+                                <small>Productos</small>
+                            </div>
+                            <div class="col-4">
+                                <h4 class="text-turquesa mb-1">50+</h4>
+                                <small>Marcas</small>
+                            </div>
+                            <div class="col-4">
+                                <h4 class="text-turquesa mb-1">5k+</h4>
+                                <small>Clientes</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image text-center">
+                    <img src="/images/hero-devices.png" alt="Dispositivos Tecnológicos" 
+                         class="img-fluid" style="max-height: 500px;">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="py-5">
+    <div class="container">
+        <div class="section-title">
+            <h2>Productos Destacados</h2>
+            <p>Los dispositivos más populares y mejor valorados por nuestros clientes</p>
+        </div>
+        
+        <% if (dispositivos.length > 0) { %>
+            <div class="row">
+                <% dispositivos.forEach(dispositivo => { %>
+                <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                    <div class="card product-card">
+                        <div class="position-relative">
+                            <% if (dispositivo.imagen_url) { %>
+                            <img src="<%= dispositivo.imagen_url %>" class="card-img-top" 
+                                 alt="<%= dispositivo.nombre %>" loading="lazy">
+                            <% } else { %>
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                                 style="height: 250px;">
+                                <i class="fas fa-mobile-alt fa-4x text-muted"></i>
+                            </div>
+                            <% } %>
+                            
+                            <% if (dispositivo.promedio_calificacion > 4) { %>
+                            <div class="position-absolute top-0 end-0 m-3">
+                                <span class="badge bg-warning">
+                                    <i class="fas fa-star me-1"></i><%= dispositivo.promedio_calificacion.toFixed(1) %>
+                                </span>
+                            </div>
+                            <% } %>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-primary"><%= dispositivo.marca_nombre %></span>
+                                <span class="badge bg-info"><%= dispositivo.categoria_nombre %></span>
+                            </div>
+                            
+                            <h5 class="card-title"><%= dispositivo.nombre %></h5>
+                            
+                            <% if (dispositivo.descripcion) { %>
+                            <p class="card-text text-muted small">
+                                <%= dispositivo.descripcion.length > 100 ? 
+                                    dispositivo.descripcion.substring(0, 100) + '...' : 
+                                    dispositivo.descripcion %>
+                            </p>
+                            <% } %>
+                            
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="precio">$<%= parseFloat(dispositivo.precio).toLocaleString('es-ES') %></span>
+                                    <% if (dispositivo.estado_id === 1) { %>
+                                    <span class="badge bg-success">Disponible</span>
+                                    <% } else { %>
+                                    <span class="badge bg-secondary">Agotado</span>
+                                    <% } %>
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <a href="/producto/<%= dispositivo.dispositivo_id %>" 
+                                       class="btn btn-outline-primary">
+                                        <i class="fas fa-eye me-2"></i>Ver Detalles
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="/catalogo" class="btn btn-primary btn-lg">
+                    <i class="fas fa-arrow-right me-2"></i>Ver Todos los Productos
+                </a>
+            </div>
+        <% } else { %>
+            <div class="text-center py-5">
+                <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted">No hay productos disponibles</h4>
+                <p class="text-muted">Próximamente tendremos nuevos productos en stock.</p>
+            </div>
+        <% } %>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="text-center">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-shipping-fast fa-3x text-turquesa"></i>
+                    </div>
+                    <h4>Envío Rápido</h4>
+                    <p class="text-muted">Recibe tus productos en 24-48 horas con nuestro servicio de envío express.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="text-center">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-shield-alt fa-3x text-turquesa"></i>
+                    </div>
+                    <h4>Garantía Extendida</h4>
+                    <p class="text-muted">Todos nuestros productos incluyen garantía del fabricante y soporte técnico.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="text-center">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-headset fa-3x text-turquesa"></i>
+                    </div>
+                    <h4>Soporte 24/7</h4>
+                    <p class="text-muted">Nuestro equipo de soporte está disponible para ayudarte en cualquier momento.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

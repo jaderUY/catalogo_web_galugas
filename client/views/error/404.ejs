@@ -1,0 +1,33 @@
+<%- include('../partials/header', { 
+    title: 'Página No Encontrada - Galugas',
+    meta: {
+        description: 'La página que buscas no existe en Galugas.',
+        keywords: 'error 404, página no encontrada, galugas'
+    }
+}) %>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="error-content">
+                <i class="fas fa-exclamation-triangle fa-5x text-warning mb-4"></i>
+                <h1 class="display-4 fw-bold">404</h1>
+                <h2 class="mb-4">Página No Encontrada</h2>
+                <p class="lead mb-4">Lo sentimos, la página que estás buscando no existe o ha sido movida.</p>
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <a href="/" class="btn btn-primary btn-lg">
+                        <i class="fas fa-home me-2"></i>Volver al Inicio
+                    </a>
+                    <a href="/catalogo" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-shopping-bag me-2"></i>Ir al Catálogo
+                    </a>
+                    <button onclick="history.back()" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Volver Atrás
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

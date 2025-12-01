@@ -1,0 +1,247 @@
+<%- include('../../partials/admin-header', { 
+    title: 'Editar Dispositivo',
+    activePage: 'dispositivos'
+}) %>
+
+<div class="admin-form">
+    <form action="/admin/dispositivos/editar/<%= dispositivo.dispositivo_id %>" method="POST" enctype="multipart/form-data">
+        <!-- Información Básica -->
+        <div class="form-section">
+            <h4 class="form-section-title">
+                <i class="fas fa-info-circle me-2"></i>Información Básica
+            </h4>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="nombre" class="form-label">Nombre del Dispositivo *</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" 
+                           value="<%= dispositivo.nombre %>" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="precio" class="form-label">Precio *</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" class="form-control" id="precio" name="precio" 
+                               value="<%= dispositivo.precio %>" step="0.01" min="0" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="marca_id" class="form-label">Marca *</label>
+                    <select class="form-select" id="marca_id" name="marca_id" required>
+                        <option value="">Seleccionar marca</option>
+                        <% marcas.forEach(marca => { %>
+                        <option value="<%= marca.marca_id %>" 
+                                <%= dispositivo.marca_id == marca.marca_id ? 'selected' : '' %>>
+                            <%= marca.nombre %>
+                        </option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="categoria_id" class="form-label">Categoría</label>
+                    <select class="form-select" id="categoria_id" name="categoria_id">
+                        <option value="">Seleccionar categoría</option>
+                        <% categorias.forEach(cat => { %>
+                        <option value="<%= cat.categoria_id %>" 
+                                <%= dispositivo.categoria_id == cat.categoria_id ? 'selected' : '' %>>
+                            <%= cat.nombre %>
+                        </option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="fechaLanzamiento" class="form-label">Fecha de Lanzamiento *</label>
+                    <input type="date" class="form-control" id="fechaLanzamiento" name="fechaLanzamiento" 
+                           value="<%= dispositivo.fechaLanzamiento.toISOString().split('T')[0] %>" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <textarea class="form-control" id="descripcion" name="descripcion" rows="3"><%= dispositivo.descripcion || '' %></textarea>
+            </div>
+        </div>
+
+        <!-- Imagen del Producto -->
+        <div class="form-section">
+            <h4 class="form-section-title">
+                <i class="fas fa-image me-2"></i>Imagen del Producto
+            </h4>
+            
+            <div class="image-preview-container">
+                <% if (dispositivo.pathFoto) { %>
+                    <img src="<%= dispositivo.imagen_url %>" class="image-preview" alt="Vista previa" style="display: block;">
+                    <div class="file-name mt-2">Imagen actual</div>
+                    <div class="file-size text-muted">Imagen existente</div>
+                    <button type="button" class="btn btn-sm btn-danger remove-preview mt-2">
+                        <i class="fas fa-times me-1"></i>Eliminar
+                    </button>
+                <% } else { %>
+                    <div class="no-image-preview">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p class="mt-2">Arrastra una imagen o haz clic para seleccionar</p>
+                        <small class="text-muted">Formatos: JPG, PNG, GIF, WebP (Máx. 5MB)</small>
+                    </div>
+                    <img src="" class="image-preview" alt="Vista previa">
+                    <div class="file-name mt-2" style="display: none;"></div>
+                    <div class="file-size text-muted" style="display: none;"></div>
+                    <button type="button" class="btn btn-sm btn-danger remove-preview mt-2" style="display: none;">
+                        <i class="fas fa-times me-1"></i>Eliminar
+                    </button>
+                <% } %>
+            </div>
+            
+            <input type="file" class="form-control mt-3" id="imagen" name="imagen" 
+                   accept="image/*" style="display: none;">
+            <button type="button" class="btn btn-outline-primary mt-2" onclick="document.getElementById('imagen').click()">
+                <i class="fas fa-folder-open me-1"></i>Cambiar Imagen
+            </button>
+            <div class="form-text">
+                Deja vacío para mantener la imagen actual
+            </div>
+        </div>
+
+        <!-- Información Técnica -->
+        <div class="form-section">
+            <h4 class="form-section-title">
+                <i class="fas fa-microchip me-2"></i>Información Técnica
+            </h4>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="procesador" class="form-label">Procesador</label>
+                    <input type="text" class="form-control" id="procesador" name="procesador" 
+                           value="<%= dispositivo.procesador || '' %>">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="ram_gb" class="form-label">Memoria RAM</label>
+                    <input type="text" class="form-control" id="ram_gb" name="ram_gb" 
+                           value="<%= dispositivo.ram_gb || '' %>">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="almacenamiento" class="form-label">Almacenamiento</label>
+                    <input type="text" class="form-control" id="almacenamiento" name="almacenamiento" 
+                           value="<%= dispositivo.almacenamiento || '' %>">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="resolucion" class="form-label">Resolución de Pantalla</label>
+                    <input type="text" class="form-control" id="resolucion" name="resolucion" 
+                           value="<%= dispositivo.resolucion || '' %>">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="dimensiones" class="form-label">Dimensiones</label>
+                    <input type="text" class="form-control" id="dimensiones" name="dimensiones" 
+                           value="<%= dispositivo.dimensiones || '' %>">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="puertos" class="form-label">Puertos</label>
+                    <input type="text" class="form-control" id="puertos" name="puertos" 
+                           value="<%= dispositivo.puertos || '' %>">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="conectividad" class="form-label">Conectividad</label>
+                    <input type="text" class="form-control" id="conectividad" name="conectividad" 
+                           value="<%= dispositivo.conectividad || '' %>">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="otros" class="form-label">Otras Especificaciones</label>
+                <textarea class="form-control" id="otros" name="otros" rows="3"><%= dispositivo.otros || '' %></textarea>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="/admin/dispositivos" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Cancelar
+            </a>
+            <div>
+                <a href="/admin/dispositivos/eliminar/<%= dispositivo.dispositivo_id %>" 
+                   class="btn btn-outline-danger me-2"
+                   onclick="return confirm('¿Estás seguro de eliminar este dispositivo?')">
+                    <i class="fas fa-trash me-1"></i>Eliminar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i>Actualizar Dispositivo
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const imageInput = document.getElementById('imagen');
+        const previewContainer = document.querySelector('.image-preview-container');
+        const previewImg = previewContainer.querySelector('.image-preview');
+        const noPreview = previewContainer.querySelector('.no-image-preview');
+        const fileName = previewContainer.querySelector('.file-name');
+        const fileSize = previewContainer.querySelector('.file-size');
+        const removeBtn = previewContainer.querySelector('.remove-preview');
+
+        // Si ya hay una imagen, configurar el estado inicial
+        if (previewImg.style.display === 'block') {
+            previewContainer.classList.add('has-preview');
+        }
+
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    if (noPreview) noPreview.style.display = 'none';
+                    previewImg.src = e.target.result;
+                    previewImg.style.display = 'block';
+                    
+                    if (fileName) {
+                        fileName.textContent = file.name;
+                        fileName.style.display = 'block';
+                    }
+                    
+                    if (fileSize) {
+                        fileSize.textContent = formatFileSize(file.size);
+                        fileSize.style.display = 'block';
+                    }
+                    
+                    if (removeBtn) removeBtn.style.display = 'block';
+                    previewContainer.classList.add('has-preview');
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+                imageInput.value = '';
+                previewImg.style.display = 'none';
+                if (noPreview) noPreview.style.display = 'block';
+                if (fileName) fileName.style.display = 'none';
+                if (fileSize) fileSize.style.display = 'none';
+                removeBtn.style.display = 'none';
+                previewContainer.classList.remove('has-preview');
+            });
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    });
+</script>
+
+<%- include('../../partials/admin-footer') %>

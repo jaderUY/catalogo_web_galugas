@@ -1,0 +1,218 @@
+<%- include('../../partials/admin-header', { 
+    title: 'Crear Dispositivo',
+    activePage: 'dispositivos'
+}) %>
+
+<div class="admin-form">
+    <form action="/admin/dispositivos/crear" method="POST" enctype="multipart/form-data">
+        <!-- Información Básica -->
+        <div class="form-section">
+            <h4 class="form-section-title">
+                <i class="fas fa-info-circle me-2"></i>Información Básica
+            </h4>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="nombre" class="form-label">Nombre del Dispositivo *</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" required 
+                           placeholder="Ej: iPhone 15 Pro, Galaxy S24 Ultra">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="precio" class="form-label">Precio *</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" class="form-control" id="precio" name="precio" 
+                               step="0.01" min="0" required placeholder="0.00">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="marca_id" class="form-label">Marca *</label>
+                    <select class="form-select" id="marca_id" name="marca_id" required>
+                        <option value="">Seleccionar marca</option>
+                        <% marcas.forEach(marca => { %>
+                        <option value="<%= marca.marca_id %>"><%= marca.nombre %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="categoria_id" class="form-label">Categoría</label>
+                    <select class="form-select" id="categoria_id" name="categoria_id">
+                        <option value="">Seleccionar categoría</option>
+                        <% categorias.forEach(cat => { %>
+                        <option value="<%= cat.categoria_id %>"><%= cat.nombre %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="fechaLanzamiento" class="form-label">Fecha de Lanzamiento *</label>
+                    <input type="date" class="form-control" id="fechaLanzamiento" name="fechaLanzamiento" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <textarea class="form-control" id="descripcion" name="descripcion" rows="3" 
+                          placeholder="Descripción detallada del dispositivo..."></textarea>
+            </div>
+        </div>
+
+        <!-- Imagen del Producto -->
+        <div class="form-section">
+            <h4 class="form-section-title">
+                <i class="fas fa-image me-2"></i>Imagen del Producto
+            </h4>
+            
+            <div class="image-preview-container">
+                <div class="no-image-preview">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p class="mt-2">Arrastra una imagen o haz clic para seleccionar</p>
+                    <small class="text-muted">Formatos: JPG, PNG, GIF, WebP (Máx. 5MB)</small>
+                </div>
+                <img src="" class="image-preview" alt="Vista previa">
+                <div class="file-name mt-2" style="display: none;"></div>
+                <div class="file-size text-muted" style="display: none;"></div>
+                <button type="button" class="btn btn-sm btn-danger remove-preview mt-2" style="display: none;">
+                    <i class="fas fa-times me-1"></i>Eliminar
+                </button>
+            </div>
+            
+            <input type="file" class="form-control mt-3" id="imagen" name="imagen" 
+                   accept="image/*" style="display: none;">
+            <button type="button" class="btn btn-outline-primary mt-2" onclick="document.getElementById('imagen').click()">
+                <i class="fas fa-folder-open me-1"></i>Seleccionar Imagen
+            </button>
+        </div>
+
+        <!-- Información Técnica -->
+        <div class="form-section">
+            <h4 class="form-section-title">
+                <i class="fas fa-microchip me-2"></i>Información Técnica
+            </h4>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="procesador" class="form-label">Procesador</label>
+                    <input type="text" class="form-control" id="procesador" name="procesador" 
+                           placeholder="Ej: Snapdragon 8 Gen 2, Apple A17 Pro">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="ram_gb" class="form-label">Memoria RAM</label>
+                    <input type="text" class="form-control" id="ram_gb" name="ram_gb" 
+                           placeholder="Ej: 8GB, 12GB, 16GB">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="almacenamiento" class="form-label">Almacenamiento</label>
+                    <input type="text" class="form-control" id="almacenamiento" name="almacenamiento" 
+                           placeholder="Ej: 128GB, 256GB SSD, 512GB">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="resolucion" class="form-label">Resolución de Pantalla</label>
+                    <input type="text" class="form-control" id="resolucion" name="resolucion" 
+                           placeholder="Ej: 6.7\" FHD+, 15.6\" 4K UHD">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="dimensiones" class="form-label">Dimensiones</label>
+                    <input type="text" class="form-control" id="dimensiones" name="dimensiones" 
+                           placeholder="Ej: 160.9 x 76.7 x 8.9 mm">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="puertos" class="form-label">Puertos</label>
+                    <input type="text" class="form-control" id="puertos" name="puertos" 
+                           placeholder="Ej: USB-C, HDMI, Thunderbolt 4">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="conectividad" class="form-label">Conectividad</label>
+                    <input type="text" class="form-control" id="conectividad" name="conectividad" 
+                           placeholder="Ej: 5G, Wi-Fi 6, Bluetooth 5.3">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="otros" class="form-label">Otras Especificaciones</label>
+                <textarea class="form-control" id="otros" name="otros" rows="3" 
+                          placeholder="Características adicionales, sensores, batería, etc..."></textarea>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="/admin/dispositivos" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Cancelar
+            </a>
+            <div>
+                <button type="reset" class="btn btn-outline-danger me-2">
+                    <i class="fas fa-undo me-1"></i>Limpiar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i>Crear Dispositivo
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Inicializar preview de imagen
+    document.addEventListener('DOMContentLoaded', function() {
+        const imageInput = document.getElementById('imagen');
+        const previewContainer = document.querySelector('.image-preview-container');
+        const previewImg = previewContainer.querySelector('.image-preview');
+        const noPreview = previewContainer.querySelector('.no-image-preview');
+        const fileName = previewContainer.querySelector('.file-name');
+        const fileSize = previewContainer.querySelector('.file-size');
+        const removeBtn = previewContainer.querySelector('.remove-preview');
+
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    noPreview.style.display = 'none';
+                    previewImg.src = e.target.result;
+                    previewImg.style.display = 'block';
+                    
+                    fileName.textContent = file.name;
+                    fileName.style.display = 'block';
+                    
+                    fileSize.textContent = formatFileSize(file.size);
+                    fileSize.style.display = 'block';
+                    
+                    removeBtn.style.display = 'block';
+                    previewContainer.classList.add('has-preview');
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+
+        removeBtn.addEventListener('click', function() {
+            imageInput.value = '';
+            previewImg.style.display = 'none';
+            noPreview.style.display = 'block';
+            fileName.style.display = 'none';
+            fileSize.style.display = 'none';
+            removeBtn.style.display = 'none';
+            previewContainer.classList.remove('has-preview');
+        });
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    });
+</script>
+
+<%- include('../../partials/admin-footer') %>

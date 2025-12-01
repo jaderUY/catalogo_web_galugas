@@ -1,0 +1,203 @@
+<%- include('../partials/admin-header', { 
+    title: 'Dashboard',
+    activePage: 'dashboard'
+}) %>
+
+<!-- Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card primary">
+        <div class="stat-icon">
+            <i class="fas fa-mobile-alt"></i>
+        </div>
+        <div class="stat-number"><%= estadisticas.total ? estadisticas.total[0].total : 0 %></div>
+        <div class="stat-label">Total Dispositivos</div>
+        <div class="stat-trend trend-up">
+            <i class="fas fa-arrow-up"></i>
+            <span>12% vs último mes</span>
+        </div>
+    </div>
+    
+    <div class="stat-card success">
+        <div class="stat-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-number"><%= usuarios.length %></div>
+        <div class="stat-label">Usuarios Registrados</div>
+        <div class="stat-trend trend-up">
+            <i class="fas fa-arrow-up"></i>
+            <span>8% vs último mes</span>
+        </div>
+    </div>
+    
+    <div class="stat-card warning">
+        <div class="stat-icon">
+            <i class="fas fa-clipboard-list"></i>
+        </div>
+        <div class="stat-number"><%= logs.totalActividades ? logs.totalActividades[0].total : 0 %></div>
+        <div class="stat-label">Actividades Hoy</div>
+        <div class="stat-trend trend-up">
+            <i class="fas fa-arrow-up"></i>
+            <span>15% vs ayer</span>
+        </div>
+    </div>
+    
+    <div class="stat-card info">
+        <div class="stat-icon">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="stat-number">$<%= estadisticas.precioPromedio ? parseFloat(estadisticas.precioPromedio[0].promedio || 0).toFixed(2) : '0.00' %></div>
+        <div class="stat-label">Precio Promedio</div>
+        <div class="stat-trend trend-up">
+            <i class="fas fa-arrow-up"></i>
+            <span>5% vs último mes</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Dispositivos Recientes -->
+    <div class="col-lg-8">
+        <div class="admin-table-container">
+            <div class="admin-table-header">
+                <h3><i class="fas fa-mobile-alt me-2"></i>Dispositivos Recientes</h3>
+                <div class="table-actions">
+                    <a href="/admin/dispositivos/crear" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Nuevo Dispositivo
+                    </a>
+                    <a href="/admin/dispositivos" class="btn btn-outline-primary btn-sm">Ver Todos</a>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Marca</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (dispositivos.length > 0) { %>
+                            <% dispositivos.forEach(dispositivo => { %>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <% if (dispositivo.pathFoto) { %>
+                                        <img src="<%= dispositivo.imagen_url %>" alt="<%= dispositivo.nombre %>" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                        <% } else { %>
+                                        <div class="bg-light rounded d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-mobile-alt text-muted"></i>
+                                        </div>
+                                        <% } %>
+                                        <span><%= dispositivo.nombre %></span>
+                                    </div>
+                                </td>
+                                <td><%= dispositivo.marca_nombre %></td>
+                                <td>
+                                    <span class="badge bg-info"><%= dispositivo.categoria_nombre %></span>
+                                </td>
+                                <td>$<%= parseFloat(dispositivo.precio).toLocaleString('es-ES') %></td>
+                                <td>
+                                    <% if (dispositivo.estado_id === 1) { %>
+                                        <span class="badge-admin badge-active">Activo</span>
+                                    <% } else { %>
+                                        <span class="badge-admin badge-inactive">Inactivo</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="/producto/<%= dispositivo.dispositivo_id %>" class="btn-action btn-view" title="Ver">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="/admin/dispositivos/editar/<%= dispositivo.dispositivo_id %>" class="btn-action btn-edit" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="/admin/dispositivos/eliminar/<%= dispositivo.dispositivo_id %>" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar este dispositivo?')">
+                                            <button type="submit" class="btn-action btn-delete" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <i class="fas fa-inbox fa-2x text-muted mb-2"></i>
+                                    <p class="text-muted mb-0">No hay dispositivos registrados</p>
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Estadísticas Rápidas -->
+    <div class="col-lg-4">
+        <div class="admin-table-container">
+            <div class="admin-table-header">
+                <h3><i class="fas fa-chart-pie me-2"></i>Estadísticas Rápidas</h3>
+            </div>
+            <div class="p-3">
+                <!-- Dispositivos por Categoría -->
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Dispositivos por Categoría</h6>
+                    <% if (estadisticas.porCategoria && estadisticas.porCategoria.length > 0) { %>
+                        <% estadisticas.porCategoria.forEach(cat => { %>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small"><%= cat.nombre || 'Sin categoría' %></span>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-primary me-2"><%= cat.total %></span>
+                                <div class="progress" style="width: 80px; height: 6px;">
+                                    <div class="progress-bar bg-primary" style="width: <%= (cat.total / estadisticas.total[0].total) * 100 %>%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p class="text-muted small">No hay datos disponibles</p>
+                    <% } %>
+                </div>
+                
+                <!-- Actividad Reciente -->
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Actividad Reciente</h6>
+                    <% if (logs && logs.actividadesPorTipo) { %>
+                        <% logs.actividadesPorTipo.forEach(act => { %>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small"><%= act.tipo_usuario %></span>
+                            <span class="badge bg-secondary"><%= act.total %></span>
+                        </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p class="text-muted small">No hay actividad reciente</p>
+                    <% } %>
+                </div>
+                
+                <!-- Acciones Rápidas -->
+                <div>
+                    <h6 class="fw-bold mb-3">Acciones Rápidas</h6>
+                    <div class="d-grid gap-2">
+                        <a href="/admin/dispositivos/crear" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-plus me-1"></i>Nuevo Dispositivo
+                        </a>
+                        <a href="/admin/categorias" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-tags me-1"></i>Gestionar Categorías
+                        </a>
+                        <a href="/admin/logs" class="btn btn-outline-warning btn-sm">
+                            <i class="fas fa-clipboard-list me-1"></i>Ver Logs del Sistema
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/admin-footer') %>
