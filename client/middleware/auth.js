@@ -40,7 +40,7 @@ const requireVendedor = async (req, res, next) => {
   next();
 };
 
-module.exports = {
+export {
   requireAuth,
   requireAdmin,
   requireVendedor

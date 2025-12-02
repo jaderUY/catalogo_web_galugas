@@ -1,5 +1,6 @@
 {
     "terminal.integrated.env.windows": {
         "PATH": "D:\\TOOLs\\NodeJSPortable\\node-v22.19.0-win-x64;${env:PATH}"
-    }
+    },
+    "git.ignoreLimitWarning": true
 }

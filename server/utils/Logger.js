@@ -62,7 +62,7 @@ export class Logger {
    * @param {Object} meta - Metadatos
    */
   warn(message, meta = {}) {
-    console.warn(`⚠️ WARN: ${message}`, meta);
+    console.warn(`WARN: ${message}`, meta);
     this._writeToFile('WARN', message, meta);
   }
 
@@ -72,7 +72,7 @@ export class Logger {
    * @param {Object} meta - Metadatos
    */
   error(message, meta = {}) {
-    console.error(`❌ ERROR: ${message}`, meta);
+    console.error(`ERROR: ${message}`, meta);
     this._writeToFile('ERROR', message, meta);
   }
 

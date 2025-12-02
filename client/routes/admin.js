@@ -1,10 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const axios = require('axios');
-const multer = require('multer');
-const path = require('path');
+import express from 'express';
+import axios from 'axios';
+import multer from 'multer';
+import path from 'path';
+import { config } from '../config/environment.js';
 
-const API_URL = process.env.API_URL || 'http://localhost:3000/api';
+const router = express.Router();
+const API_URL = config.API_URL;
 
 // Configuración de multer para uploads
 const storage = multer.memoryStorage();
@@ -340,4 +341,4 @@ router.get('/profile', requireAdmin, (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

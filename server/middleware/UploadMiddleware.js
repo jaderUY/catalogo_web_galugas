@@ -20,7 +20,7 @@ class UploadManager {
   _ensureUploadDirExists() {
     if (!fs.existsSync(this.uploadDir)) {
       fs.mkdirSync(this.uploadDir, { recursive: true });
-      console.log('📁 Directorio de uploads creado:', this.uploadDir);
+      console.log('Upload directory created:', this.uploadDir);
     }
   }
 
@@ -73,7 +73,7 @@ class UploadManager {
    * @returns {Object} Middleware de Multer
    */
   getUploadMiddleware(options = {}) {
-    const config = {
+    const multerConfig = {
       storage: this._getStorage(),
       limits: {
         fileSize: options.fileSize || config.MAX_FILE_SIZE
@@ -81,7 +81,7 @@ class UploadManager {
       fileFilter: this._fileFilter.bind(this)
     };
 
-    return multer(config);
+    return multer(multerConfig);
   }
 
   /**
@@ -125,10 +125,10 @@ class UploadManager {
     return new Promise((resolve) => {
       fs.unlink(filePath, (err) => {
         if (err) {
-          console.warn(`No se pudo eliminar el archivo: ${filePath}`, err.message);
+          console.warn(`Failed to delete file: ${filePath}`, err.message);
           resolve(false);
         } else {
-          console.log(`🗑️  Archivo eliminado: ${filename}`);
+          console.log(`File deleted: ${filename}`);
           resolve(true);
         }
       });

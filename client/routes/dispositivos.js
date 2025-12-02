@@ -1,8 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const axios = require('axios');
+import express from 'express';
+import axios from 'axios';
+import { config } from '../config/environment.js';
 
-const API_URL = process.env.API_URL || 'http://localhost:3000/api';
+const router = express.Router();
+const API_URL = config.API_URL;
 
 // API endpoints para el cliente (AJAX)
 router.get('/api/categorias', async (req, res) => {
@@ -37,4 +38,4 @@ router.get('/api/dispositivos-filters', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

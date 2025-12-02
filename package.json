@@ -1,20 +1,60 @@
 {
-  "name": "catalogo_web_galugas",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "galugas",
+  "version": "yes",
+  "description": "yes",
+  "type": "module",
+  "author": "Galugas Team",
   "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "start": "node server/server.js",
+    "server": "node server/server.js",
+    "server:dev": "nodemon server/server.js",
+    "client": "node client/app.js",
+    "client:dev": "nodemon client/app.js",
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "test": "echo \"Tests not configured yet\" && exit 0",
+    "test:server": "node --test server/**/*.test.js",
+    "test:client": "node --test client/**/*.test.js",
+    "setup-db": "node server/scripts/setupDatabase.js",
+    "seed": "node server/scripts/seedData.js",
+    "lint": "eslint .",
+    "format": "prettier --write \"**/*.{js,json,md}\"",
+    "validate:env": "node scripts/validateEnv.js"
+  },
   "dependencies": {
-    "axios": "^1.13.2",
-    "bcryptjs": "^3.0.3",
+    "axios": "^1.6.2",
+    "bcryptjs": "^2.4.3",
     "connect-flash": "^0.1.1",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
+    "dotenv": "^16.3.1",
     "ejs": "^3.1.10",
-    "express": "^5.1.0",
-    "express-rate-limit": "^8.2.1",
-    "express-session": "^1.18.2",
-    "helmet": "^8.1.0",
-    "multer": "^2.0.2",
-    "mysql2": "^3.15.3"
-  }
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "express-session": "^1.17.3",
+    "helmet": "^7.1.0",
+    "multer": "^1.4.4",
+    "mysql2": "^3.6.5"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "eslint": "^8.55.0",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.1.1"
+  },
+  "keywords": [
+    "ecommerce",
+    "catalog",
+    "galugas",
+    "nodejs",
+    "express",
+    "mysql",
+    "ejs",
+    "ssr"
+  ],
+  "repository": "https://github.com/jaderUY/catalogo_web_galugas.git",
+  "main": "index.js"
 }

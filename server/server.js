@@ -39,7 +39,7 @@ class Server {
    */
   initializeConfig() {
     validateConfig();
-    console.log('🎯 Entorno:', config.NODE_ENV);
+    console.log('Environment: ' + config.NODE_ENV);
   }
 
   /**
@@ -49,7 +49,7 @@ class Server {
     try {
       await database.initialize();
     } catch (error) {
-      console.error('❌ Error crítico: No se pudo conectar a la base de datos');
+      console.error('CRITICAL: Could not connect to database');
       process.exit(1);
     }
   }
@@ -121,7 +121,7 @@ class Server {
     // Ruta de bienvenida
     this.app.get('/', (req, res) => {
       res.json({
-        message: '🚀 Servidor Galugas API funcionando correctamente',
+        message: 'Server Galugas API is running',
         version: '1.0.0',
         environment: config.NODE_ENV,
         timestamp: new Date().toISOString(),
@@ -147,14 +147,14 @@ class Server {
   start() {
     this.server = this.app.listen(this.port, () => {
       console.log('='.repeat(60));
-      console.log('🚀 Servidor Galugas API iniciado exitosamente');
+      console.log('Server API started successfully');
       console.log('='.repeat(60));
-      console.log(`📍 Puerto: ${this.port}`);
-      console.log(`🌍 Entorno: ${config.NODE_ENV}`);
-      console.log(`📅 Iniciado: ${new Date().toISOString()}`);
-      console.log(`🔗 URL: http://localhost:${this.port}`);
-      console.log(`👤 Cliente: ${config.CLIENT_URL}`);
-      console.log(`🗄️  Base de datos: ${config.DB_HOST}/${config.DB_NAME}`);
+      console.log(`Port: ${this.port}`);
+      console.log(`Environment: ${config.NODE_ENV}`);
+      console.log(`Started: ${new Date().toISOString()}`);
+      console.log(`URL: http://localhost:${this.port}`);
+      console.log(`Client: ${config.CLIENT_URL}`);
+      console.log(`Database: ${config.DB_HOST}/${config.DB_NAME}`);
       console.log('='.repeat(60));
     });
 
@@ -167,21 +167,21 @@ class Server {
    */
   setupGracefulShutdown() {
     const shutdown = async (signal) => {
-      console.log(`\n📞 Recibido ${signal}. Cerrando servidor...`);
+      console.log(`\nReceived ${signal}. Shutting down server...`);
       
       this.server.close(async () => {
-        console.log('🔒 Servidor HTTP cerrado');
+        console.log('HTTP server closed');
         
         await database.close();
-        console.log('🗄️  Conexión a base de datos cerrada');
+        console.log('Database connection closed');
         
-        console.log('👋 Servidor cerrado exitosamente');
+        console.log('Server shutdown successfully');
         process.exit(0);
       });
 
       // Force close after 10 seconds
       setTimeout(() => {
-        console.error('⏰ Timeout forzando cierre del servidor');
+        console.error('Timeout: forcing server shutdown');
         process.exit(1);
       }, 10000);
     };
@@ -191,11 +191,11 @@ class Server {
     
     // Manejo de errores no capturados
     process.on('unhandledRejection', (reason, promise) => {
-      console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+      console.error('Unhandled Rejection at:', promise, 'reason:', reason);
     });
 
     process.on('uncaughtException', (error) => {
-      console.error('❌ Uncaught Exception:', error);
+      console.error('Uncaught Exception:', error);
       process.exit(1);
     });
   }

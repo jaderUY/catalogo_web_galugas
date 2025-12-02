@@ -1,10 +1,13 @@
-const express = require('express');
+import express from 'express';
+import apiClient from '../services/APIClient.js';
+import { isValidEmail, isValidPassword } from '../utils/helpers.js';
+import { MESSAGES } from '../constants/app.js';
+
 const router = express.Router();
-const axios = require('axios');
 
-const API_URL = process.env.API_URL || 'http://localhost:3000/api';
-
-// Middleware para redirigir usuarios autenticados
+/**
+ * Middleware para redirigir usuarios autenticados
+ */
 const redirectIfAuthenticated = (req, res, next) => {
   if (req.session.user) {
     return res.redirect('/');
@@ -12,7 +15,20 @@ const redirectIfAuthenticated = (req, res, next) => {
   next();
 };
 
-// Página de login
+/**
+ * Middleware para verificar autenticación
+ */
+const requireAuth = (req, res, next) => {
+  if (!req.session.user) {
+    req.flash('error_msg', 'Debes iniciar sesión para acceder a esta página');
+    return res.redirect('/auth/login');
+  }
+  next();
+};
+
+/**
+ * GET - Página de login
+ */
 router.get('/login', redirectIfAuthenticated, (req, res) => {
   res.render('pages/login', {
     title: 'Iniciar Sesión - Galugas',
@@ -23,49 +39,60 @@ router.get('/login', redirectIfAuthenticated, (req, res) => {
   });
 });
 
-// Procesar login
+/**
+ * POST - Procesar login
+ */
 router.post('/login', redirectIfAuthenticated, async (req, res) => {
   try {
     const { email, password } = req.body;
-    
+
+    // Validaciones
     if (!email || !password) {
       req.flash('error_msg', 'Email y contraseña son requeridos');
       return res.redirect('/auth/login');
     }
 
-    const response = await axios.post(`${API_URL}/auth/login`, {
-      email,
-      password
-    });
+    if (!isValidEmail(email)) {
+      req.flash('error_msg', 'Email inválido');
+      return res.redirect('/auth/login');
+    }
+
+    const response = await apiClient.login(email, password);
+    const userData = response.data?.data;
+
+    if (!userData) {
+      req.flash('error_msg', MESSAGES.ERROR.INVALID_INPUT);
+      return res.redirect('/auth/login');
+    }
 
     // Establecer sesión
-    req.session.user = response.data.data;
+    req.session.user = userData;
     req.session.isAuthenticated = true;
 
-    // Log de actividad (opcional)
     console.log(`Usuario ${email} inició sesión`);
+    req.flash('success_msg', `¡Bienvenido de nuevo, ${userData.primer_nombre}!`);
 
-    req.flash('success_msg', `¡Bienvenido de nuevo, ${response.data.data.primer_nombre}!`);
-    
-    // Redirigir a la página anterior o al dashboard si es admin
+    // Redirigir apropiadamente
     const redirectTo = req.session.returnTo || 
-                     (response.data.data.rol_nombre === 'Administrador' ? '/admin' : '/');
+                     (userData.rol_nombre === 'Administrador' ? '/admin' : '/');
     delete req.session.returnTo;
-    
+
     res.redirect(redirectTo);
   } catch (error) {
-    console.error('Login error:', error.response?.data || error.message);
-    
-    const errorMessage = error.response?.data?.error || 
-                        error.response?.data?.message || 
-                        'Error al iniciar sesión. Por favor verifica tus credenciales.';
-    
+    console.error('Login error:', error.message);
+
+    const errorMessage = error.data?.error || 
+                        error.data?.message || 
+                        MESSAGES.ERROR.SERVER_ERROR;
+
     req.flash('error_msg', errorMessage);
     res.redirect('/auth/login');
   }
 });
 
-// Página de registro
+/**
+ * GET - Página de registro
+ */
 router.get('/register', redirectIfAuthenticated, (req, res) => {
   res.render('pages/register', {
     title: 'Registrarse - Galugas',
@@ -76,14 +103,21 @@ router.get('/register', redirectIfAuthenticated, (req, res) => {
   });
 });
 
-// Procesar registro
+/**
+ * POST - Procesar registro
+ */
 router.post('/register', redirectIfAuthenticated, async (req, res) => {
   try {
     const { primer_nombre, primer_apellido, email, password, confirm_password } = req.body;
 
-    // Validaciones básicas
+    // Validaciones
     if (!primer_nombre || !primer_apellido || !email || !password) {
       req.flash('error_msg', 'Todos los campos son requeridos');
+      return res.redirect('/auth/register');
+    }
+
+    if (!isValidEmail(email)) {
+      req.flash('error_msg', 'Email inválido');
       return res.redirect('/auth/register');
     }
 
@@ -92,12 +126,12 @@ router.post('/register', redirectIfAuthenticated, async (req, res) => {
       return res.redirect('/auth/register');
     }
 
-    if (password.length < 6) {
-      req.flash('error_msg', 'La contraseña debe tener al menos 6 caracteres');
+    if (!isValidPassword(password)) {
+      req.flash('error_msg', 'La contraseña debe tener al menos 6 caracteres y contener letras y números');
       return res.redirect('/auth/register');
     }
 
-    const response = await axios.post(`${API_URL}/auth/register`, {
+    const response = await apiClient.register({
       primer_nombre: primer_nombre.trim(),
       primer_apellido: primer_apellido.trim(),
       email: email.toLowerCase().trim(),
@@ -107,29 +141,28 @@ router.post('/register', redirectIfAuthenticated, async (req, res) => {
     req.flash('success_msg', '¡Registro exitoso! Ahora puedes iniciar sesión.');
     res.redirect('/auth/login');
   } catch (error) {
-    console.error('Register error:', error.response?.data || error.message);
-    
-    const errorMessage = error.response?.data?.error || 
-                        error.response?.data?.message || 
-                        'Error al registrar usuario. Por favor intenta nuevamente.';
-    
+    console.error('Register error:', error.message);
+
+    const errorMessage = error.data?.error || 
+                        error.data?.message || 
+                        MESSAGES.ERROR.SERVER_ERROR;
+
     req.flash('error_msg', errorMessage);
     res.redirect('/auth/register');
   }
 });
 
-// Cerrar sesión
+/**
+ * POST - Cerrar sesión
+ */
 router.post('/logout', async (req, res) => {
   try {
     if (req.session.user) {
-      await axios.post(`${API_URL}/auth/logout`, {}, {
-        headers: {
-          'Cookie': `connect.sid=${req.sessionID}`
-        }
-      });
+      await apiClient.logout();
+      console.log(`Usuario cerró sesión`);
     }
   } catch (error) {
-    console.error('Logout error:', error);
+    console.error('Logout error:', error.message);
   } finally {
     req.session.destroy((err) => {
       if (err) {
@@ -140,13 +173,10 @@ router.post('/logout', async (req, res) => {
   }
 });
 
-// Perfil de usuario (vista)
-router.get('/profile', (req, res) => {
-  if (!req.session.user) {
-    req.flash('error_msg', 'Por favor inicia sesión para ver tu perfil');
-    return res.redirect('/auth/login');
-  }
-
+/**
+ * GET - Perfil de usuario (vista)
+ */
+router.get('/profile', requireAuth, (req, res) => {
   res.render('pages/profile', {
     title: 'Mi Perfil - Galugas',
     user: req.session.user,
@@ -157,82 +187,81 @@ router.get('/profile', (req, res) => {
   });
 });
 
-// Actualizar perfil
-router.post('/profile', async (req, res) => {
+/**
+ * PUT - Actualizar perfil
+ */
+router.post('/profile', requireAuth, async (req, res) => {
   try {
-    if (!req.session.user) {
-      req.flash('error_msg', 'Por favor inicia sesión');
-      return res.redirect('/auth/login');
-    }
-
     const { primer_nombre, primer_apellido, email } = req.body;
 
-    const response = await axios.put(`${API_URL}/auth/profile`, {
+    // Validaciones
+    if (!primer_nombre || !primer_apellido || !email) {
+      req.flash('error_msg', 'Todos los campos son requeridos');
+      return res.redirect('/auth/profile');
+    }
+
+    if (!isValidEmail(email)) {
+      req.flash('error_msg', 'Email inválido');
+      return res.redirect('/auth/profile');
+    }
+
+    const response = await apiClient.client.put('/auth/profile', {
       primer_nombre: primer_nombre.trim(),
       primer_apellido: primer_apellido.trim(),
       email: email.toLowerCase().trim()
-    }, {
-      headers: {
-        'Cookie': `connect.sid=${req.sessionID}`
-      }
     });
 
     // Actualizar sesión
-    req.session.user = { ...req.session.user, ...response.data.data };
+    req.session.user = { ...req.session.user, ...response.data?.data };
 
-    req.flash('success_msg', 'Perfil actualizado exitosamente');
+    req.flash('success_msg', MESSAGES.SUCCESS.UPDATE);
     res.redirect('/auth/profile');
   } catch (error) {
-    console.error('Profile update error:', error.response?.data || error.message);
-    
-    const errorMessage = error.response?.data?.error || 
-                        'Error al actualizar el perfil';
-    
+    console.error('Profile update error:', error.message);
+
+    const errorMessage = error.data?.error || MESSAGES.ERROR.SERVER_ERROR;
     req.flash('error_msg', errorMessage);
     res.redirect('/auth/profile');
   }
 });
 
-// Cambiar contraseña
-router.post('/change-password', async (req, res) => {
+/**
+ * PUT - Cambiar contraseña
+ */
+router.post('/change-password', requireAuth, async (req, res) => {
   try {
-    if (!req.session.user) {
-      req.flash('error_msg', 'Por favor inicia sesión');
-      return res.redirect('/auth/login');
-    }
-
     const { current_password, new_password, confirm_password } = req.body;
+
+    // Validaciones
+    if (!current_password || !new_password || !confirm_password) {
+      req.flash('error_msg', 'Todos los campos son requeridos');
+      return res.redirect('/auth/profile');
+    }
 
     if (new_password !== confirm_password) {
       req.flash('error_msg', 'Las nuevas contraseñas no coinciden');
       return res.redirect('/auth/profile');
     }
 
-    if (new_password.length < 6) {
-      req.flash('error_msg', 'La nueva contraseña debe tener al menos 6 caracteres');
+    if (!isValidPassword(new_password)) {
+      req.flash('error_msg', 'La nueva contraseña debe tener al menos 6 caracteres y contener letras y números');
       return res.redirect('/auth/profile');
     }
 
-    await axios.put(`${API_URL}/auth/change-password`, {
+    await apiClient.client.put('/auth/change-password', {
       currentPassword: current_password,
       newPassword: new_password
-    }, {
-      headers: {
-        'Cookie': `connect.sid=${req.sessionID}`
-      }
     });
 
     req.flash('success_msg', 'Contraseña cambiada exitosamente');
     res.redirect('/auth/profile');
   } catch (error) {
-    console.error('Password change error:', error.response?.data || error.message);
-    
-    const errorMessage = error.response?.data?.error || 
-                        'Error al cambiar la contraseña';
-    
+    console.error('Password change error:', error.message);
+
+    const errorMessage = error.data?.error || MESSAGES.ERROR.SERVER_ERROR;
     req.flash('error_msg', errorMessage);
     res.redirect('/auth/profile');
   }
 });
 
-module.exports = router;
+export default router;

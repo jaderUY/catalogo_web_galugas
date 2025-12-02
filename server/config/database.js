@@ -29,12 +29,12 @@ class Database {
       
       // Probar la conexión
       const connection = await this.pool.getConnection();
-      console.log('✅ Conexión a la base de datos establecida');
+      console.log('Database connection established');
       connection.release();
       
       return this.pool;
     } catch (error) {
-      console.error('❌ Error conectando a la base de datos:', error.message);
+      console.error('Error connecting to database:', error.message);
       throw error;
     }
   }

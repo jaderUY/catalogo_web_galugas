@@ -1,6 +1,9 @@
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Asegurar que el directorio de uploads existe
 const uploadDir = path.join(__dirname, '../public/uploads');
@@ -76,7 +79,7 @@ const handleUploadErrors = (error, req, res, next) => {
 const uploadSingle = (fieldName = 'imagen') => upload.single(fieldName);
 const uploadMultiple = (fieldName = 'imagenes', maxCount = 5) => upload.array(fieldName, maxCount);
 
-module.exports = {
+export {
     upload,
     uploadSingle,
     uploadMultiple,
