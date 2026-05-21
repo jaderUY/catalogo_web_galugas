@@ -1,0 +1,10 @@
+<%- include('../../partials/header', { title: 'Mis pedidos' , cssFile: 'orders.css' }) %>
+    <%- include('../../partials/navbar') %>
+
+        <div class="container mt-4">
+            <h2>Historial de pedidos</h2>
+            <div id="ordersList">Cargando...</div>
+        </div>
+
+        <script src="/modules/orders/scripts/order.client.js"></script>
+        <%- include('../../partials/footer') %>

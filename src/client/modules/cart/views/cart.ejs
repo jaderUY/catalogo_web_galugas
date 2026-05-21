@@ -1,0 +1,15 @@
+<%- include('../../partials/header', { title: 'Mi carrito' , cssFile: 'cart.css' }) %>
+    <%- include('../../partials/navbar') %>
+
+        <div class="container mt-4">
+            <h2>Carrito de compras</h2>
+            <div id="cartContainer">
+                <div class="text-center">Cargando...</div>
+            </div>
+            <div class="mt-3 text-end">
+                <a href="/checkout" class="btn btn-success" id="checkoutBtn">Proceder al pago</a>
+            </div>
+        </div>
+
+        <script src="/modules/cart/scripts/cart.client.js"></script>
+        <%- include('../../partials/footer') %>

@@ -1,0 +1,28 @@
+<%- include('../../partials/header', { title: 'Finalizar compra' , cssFile: 'orders.css' }) %>
+    <%- include('../../partials/navbar') %>
+
+        <div class="container mt-4">
+            <h2>Confirmar pedido</h2>
+            <div class="row">
+                <div class="col-md-7">
+                    <div id="cartSummary">Cargando productos...</div>
+                </div>
+                <div class="col-md-5">
+                    <div class="card">
+                        <div class="card-header">Dirección de envío</div>
+                        <div class="card-body">
+                            <form id="checkoutForm">
+                                <div class="mb-3">
+                                    <label for="direccion_envio" class="form-label">Dirección completa</label>
+                                    <textarea class="form-control" id="direccion_envio" rows="3" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Realizar pedido</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/modules/orders/scripts/order.client.js"></script>
+        <%- include('../../partials/footer') %>

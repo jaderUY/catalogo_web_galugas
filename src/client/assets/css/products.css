@@ -1,0 +1,8 @@
+.card-img-top {
+    padding: 1rem;
+    background: white;
+}
+
+#productsList .card {
+    height: 100%;
+}

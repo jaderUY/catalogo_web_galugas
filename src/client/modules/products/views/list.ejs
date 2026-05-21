@@ -1,0 +1,58 @@
+<%- include('../../partials/header', { title: 'Catálogo de productos' , cssFile: 'products.css' }) %>
+    <%- include('../../partials/navbar') %>
+
+        <div class="container mt-4">
+            <div class="row">
+                <!-- Filtros laterales -->
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white">Filtrar</div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="categoryFilter" class="form-label">Categoría</label>
+                                <select id="categoryFilter" class="form-select">
+                                    <option value="">Todas</option>
+                                    <% categories.forEach(cat=> { %>
+                                        <option value="<%= cat.categoria_id %>">
+                                            <%= cat.nombre %>
+                                        </option>
+                                        <% }); %>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="brandFilter" class="form-label">Marca</label>
+                                <select id="brandFilter" class="form-select">
+                                    <option value="">Todas</option>
+                                    <!-- Las marcas se cargarán dinámicamente -->
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="searchInput" class="form-label">Buscar</label>
+                                <input type="text" id="searchInput" class="form-control"
+                                    placeholder="Nombre del producto">
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="minPrice" class="form-label">Precio min</label>
+                                    <input type="number" id="minPrice" class="form-control" placeholder="$">
+                                </div>
+                                <div class="col-6">
+                                    <label for="maxPrice" class="form-label">Precio max</label>
+                                    <input type="number" id="maxPrice" class="form-control" placeholder="$">
+                                </div>
+                            </div>
+                            <button id="applyFilters" class="btn btn-primary w-100 mt-3">Aplicar filtros</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Lista de productos -->
+                <div class="col-md-9">
+                    <div class="row" id="productsList">
+                        <!-- Aquí se cargarán los productos con JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/modules/products/scripts/product.client.js"></script>
+        <%- include('../../partials/footer') %>

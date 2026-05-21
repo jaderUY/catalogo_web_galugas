@@ -1,0 +1,74 @@
+<%- include('../../partials/header', { title: 'Registro de usuario' , cssFile: 'auth.css' }) %>
+    <%- include('../../partials/navbar') %>
+
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">Crear cuenta</h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="registerForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="primer_nombre" class="form-label">Primer nombre *</label>
+                                        <input type="text" class="form-control" id="primer_nombre" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="segundo_nombre" class="form-label">Segundo nombre</label>
+                                        <input type="text" class="form-control" id="segundo_nombre">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="primer_apellido" class="form-label">Primer apellido *</label>
+                                        <input type="text" class="form-control" id="primer_apellido" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="segundo_apellido" class="form-label">Segundo apellido</label>
+                                        <input type="text" class="form-control" id="segundo_apellido">
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="email" class="form-label">Correo electrónico *</label>
+                                        <input type="email" class="form-control" id="email" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="password" class="form-label">Contraseña * (mínimo 6
+                                            caracteres)</label>
+                                        <input type="password" class="form-control" id="password" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="confirmPassword" class="form-label">Confirmar contraseña *</label>
+                                        <input type="password" class="form-control" id="confirmPassword" required>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="direccion" class="form-label">Dirección de residencia</label>
+                                        <input type="text" class="form-control" id="direccion">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="fechaNacimiento" class="form-label">Fecha de nacimiento</label>
+                                        <input type="date" class="form-control" id="fechaNacimiento">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="pais_id" class="form-label">País</label>
+                                        <select class="form-select" id="pais_id">
+                                            <option value="1">Colombia</option>
+                                            <!-- Más opciones se pueden cargar dinámicamente -->
+                                        </select>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input type="checkbox" class="form-check-input" id="consentimiento" required>
+                                        <label class="form-check-label">Acepto la <a href="/privacidad">Política de
+                                                tratamiento de datos personales</a></label>
+                                    </div>
+                                </div>
+                                <div id="errorMsg" class="alert alert-danger d-none"></div>
+                                <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/modules/auth/scripts/auth.client.js"></script>
+        <%- include('../../partials/footer') %>

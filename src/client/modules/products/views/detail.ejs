@@ -1,0 +1,77 @@
+<%- include('../../partials/header', { title: product.nombre, cssFile: 'products.css' }) %>
+    <%- include('../../partials/navbar') %>
+
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="<%= product.pathFoto || '/images/placeholder.png' %>" class="img-fluid rounded"
+                        alt="<%= product.nombre %>">
+                </div>
+                <div class="col-md-6">
+                    <h2>
+                        <%= product.nombre %>
+                    </h2>
+                    <p><strong>Marca:</strong>
+                        <%= product.marca %>
+                    </p>
+                    <p><strong>Categoría:</strong>
+                        <%= product.categoria %>
+                    </p>
+                    <p><strong>Precio:</strong> $<%= parseFloat(product.precio).toLocaleString('es-CO') %>
+                    </p>
+                    <p><strong>Stock:</strong>
+                        <%= product.stock || 0 %> unidades
+                    </p>
+                    <p><strong>Lanzamiento:</strong>
+                        <%= product.fechaLanzamiento ? new Date(product.fechaLanzamiento).toLocaleDateString() : 'N/A'
+                            %>
+                    </p>
+                    <hr>
+                    <h5>Ficha técnica</h5>
+                    <ul>
+                        <li><strong>Procesador:</strong>
+                            <%= product.procesador || 'N/A' %>
+                        </li>
+                        <li><strong>RAM:</strong>
+                            <%= product.ram_gb || 'N/A' %>
+                        </li>
+                        <li><strong>Almacenamiento:</strong>
+                            <%= product.almacenamiento || 'N/A' %>
+                        </li>
+                        <li><strong>Resolución:</strong>
+                            <%= product.resolucion || 'N/A' %>
+                        </li>
+                        <li><strong>Conectividad:</strong>
+                            <%= product.conectividad || 'N/A' %>
+                        </li>
+                    </ul>
+                    <div class="mt-4">
+                        <label for="quantity" class="form-label">Cantidad:</label>
+                        <input type="number" id="quantity" class="form-control w-25 mb-3" value="1" min="1"
+                            max="<%= product.stock || 10 %>">
+                        <button id="addToCartBtn" class="btn btn-success" data-id="<%= product.dispositivo_id %>">
+                            <i class="fas fa-cart-plus"></i> Agregar al carrito
+                        </button>
+                    </div>
+                    <div id="cartMessage" class="alert mt-3 d-none"></div>
+                    <hr>
+                    <h4>Reseñas de clientes</h4>
+                    <div id="reviewsList"></div>
+                    <% if (user) { %>
+                        <form id="reviewForm">
+                            <input type="hidden" id="productId" value="<%= product.dispositivo_id %>">
+                            <div class="mb-3"><label>Calificación</label><select id="calificacion" class="form-select">
+                                    <option value="5">5 estrellas</option>...
+                                </select></div>
+                            <div class="mb-3"><label>Comentario</label><textarea id="comentario" class="form-control"
+                                    required></textarea></div>
+                            <button type="submit" class="btn btn-secondary">Publicar reseña</button>
+                        </form>
+                        <% } %>
+                            <script src="/modules/reviews/scripts/reviews.client.js"></script>
+                </div>
+            </div>
+        </div>
+
+        <script src="/modules/products/scripts/product.client.js"></script>
+        <%- include('../../partials/footer') %>

@@ -1,0 +1,28 @@
+<%- include('../partials/header', { title: 'Contáctanos' , cssFile: 'contact.css' }) %>
+    <%- include('../partials/navbar') %>
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Escríbenos</h2>
+                    <form id="contactForm">
+                        <div class="mb-3"><label>Nombre</label><input type="text" class="form-control" id="nombre"
+                                required></div>
+                        <div class="mb-3"><label>Email</label><input type="email" class="form-control" id="email"
+                                required></div>
+                        <div class="mb-3"><label>Teléfono</label><input type="tel" class="form-control" id="telefono">
+                        </div>
+                        <div class="mb-3"><label>Mensaje</label><textarea class="form-control" id="mensaje" rows="5"
+                                required></textarea></div>
+                        <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <h2>Información de contacto</h2>
+                    <p><i class="fas fa-map-marker-alt"></i> Calle 123, Medellín, Colombia</p>
+                    <p><i class="fas fa-phone"></i> +57 300 123 4567</p>
+                    <p><i class="fas fa-envelope"></i> info@galugas.com</p>
+                </div>
+            </div>
+        </div>
+        <script src="/modules/contact/scripts/contact.client.js"></script>
+        <%- include('../partials/footer') %>
