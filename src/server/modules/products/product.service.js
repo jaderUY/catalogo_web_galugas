@@ -5,7 +5,7 @@ const getProducts = async (filters = {}) => {
   let sql = `
     SELECT d.dispositivo_id, d.nombre, d.precio, d.pathFoto, d.fechaLanzamiento,
            m.nombre as marca, c.nombre as categoria,
-           i.stock
+           i.cantidadStock as stock
     FROM dispositivo d
     JOIN marca m ON d.marca_id = m.marca_id
     JOIN categoria c ON d.categoria_id = c.categoria_id
@@ -41,7 +41,7 @@ const getProducts = async (filters = {}) => {
 const getProductById = async (id) => {
   const [rows] = await pool.query(
     `SELECT d.*, m.nombre as marca, c.nombre as categoria, 
-            it.*, i.stock
+            it.*, i.cantidadStock as stock
      FROM dispositivo d
      JOIN marca m ON d.marca_id = m.marca_id
      JOIN categoria c ON d.categoria_id = c.categoria_id
@@ -80,6 +80,7 @@ const createProduct = async (productData) => {
       [nombre, precio, pathFoto, fechaLanzamiento, marca_id, categoria_id, estado_id, informacionTecnica_id]
     );
     const dispositivo_id = result.insertId;
+    
     // Insertar stock en inventario
     const [invResult] = await connection.query(
       `INSERT INTO inventario (fechaActualizacion, cantidadStock, ubicacionAlmacen) VALUES (CURDATE(), ?, 'Principal')`,
