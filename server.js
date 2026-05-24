@@ -2,9 +2,11 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const ejs = require('ejs');
 const session = require('express-session');
 const morgan = require('morgan');
 const env = require('./src/server/config/env');
+const { helmetConfig, apiLimiter, authLimiter, sanitizeInput } = require('./src/server/middlewares/security');
 const { setUserLocals, authPages: authPageGuard, adminPages: adminPageGuard } = require('./src/server/middlewares/viewAuth');
 const errorHandler = require('./src/server/middlewares/errorHandler');
 const notFound = require('./src/server/middlewares/notFound');
@@ -24,6 +26,17 @@ const reviewRoutes = require('./src/server/modules/reviews/review.routes');
 
 const app = express();
 
+// ========================
+// SEGURIDAD - CONFIGURACIÓN
+// ========================
+app.use(helmetConfig);
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(sanitizeInput);
+
+// ========================
+// VISTAS
+// ========================
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/client'));
 
@@ -31,24 +44,34 @@ if (env.NODE_ENV === 'production') {
   app.set('trust proxy', 1);
 }
 
+// ========================
+// LOGGING & STATIC FILES
+// ========================
 app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'src/client')));
+
+// ========================
+// SESIONES
+// ========================
 app.use(session({
   secret: env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: 'strict',
     secure: env.NODE_ENV === 'production',
     maxAge: env.SESSION_MAX_AGE
   }
 }));
 app.use(setUserLocals);
 
-app.use('/api/auth', authRoutes);
+// ========================
+// RUTAS API CON RATE LIMITING
+// ========================
+app.use('/api/', apiLimiter);
+
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
@@ -56,6 +79,9 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/reviews', reviewRoutes);
 
+// ========================
+// RUTAS DE PÁGINAS
+// ========================
 app.use('/', authPagesRoutes);
 app.use('/', productPages);
 app.use('/', contactPages);
@@ -68,12 +94,19 @@ app.use('/admin', adminPageGuard, adminPages);
 
 app.get('/', (req, res) => res.redirect('/products'));
 
+// ========================
+// MANEJO DE ERRORES
+// ========================
 app.use(notFound);
 app.use(errorHandler);
 
+// ========================
+// INICIO DEL SERVIDOR
+// ========================
 if (require.main === module) {
   app.listen(env.PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${env.PORT}`);
+    console.log(`✅ Servidor corriendo en http://localhost:${env.PORT}`);
+    console.log(`📊 Environment: ${env.NODE_ENV}`);
   });
 }
 

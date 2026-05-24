@@ -1,0 +1,7 @@
+{/*
+  "terminal.integrated.env.windows": {
+    "PATH": "D:\\TOOLs\\NodeJSPortable\\node-v24.14.0-win-x64;${env:PATH}"
+  },
+  */
+  "git.ignoreLimitWarning": true
+}

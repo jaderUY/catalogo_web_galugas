@@ -1,5 +1,4 @@
 # Recursos Node JS
-/.vscode/
 /node_modules/
 /tests/
 /yarn.lock
