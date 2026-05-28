@@ -6,13 +6,31 @@
 
 ## Tabla de Contenidos
 
-- [Descripción General](#descripción-general)
-- [Características Principales](#características-principales)
-- [Requisitos Previos](#requisitos-previos)
-- [Instalación y Configuración](#instalación-y-configuración)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Tecnologías Utilizadas](#tecnologías-utilizadas)
-- [Documentación Adicional](#documentación-adicional)
+- [Catálogo Web Galúgas - Documentación Técnica](#catálogo-web-galúgas---documentación-técnica)
+  - [Tabla de Contenidos](#tabla-de-contenidos)
+  - [Descripción General](#descripción-general)
+  - [Características Principales](#características-principales)
+    - [Para Usuarios](#para-usuarios)
+    - [Para Administradores](#para-administradores)
+    - [Seguridad](#seguridad)
+  - [Requisitos Previos](#requisitos-previos)
+  - [Instalación y Configuración](#instalación-y-configuración)
+    - [1. Clonar el Repositorio](#1-clonar-el-repositorio)
+    - [2. Instalar Dependencias](#2-instalar-dependencias)
+    - [3. Configurar Variables de Entorno](#3-configurar-variables-de-entorno)
+    - [4. Configurar Base de Datos](#4-configurar-base-de-datos)
+    - [5. Iniciar el Servidor](#5-iniciar-el-servidor)
+  - [Estructura del Proyecto](#estructura-del-proyecto)
+  - [Tecnologías Utilizadas](#tecnologías-utilizadas)
+    - [Backend](#backend)
+    - [Frontend](#frontend)
+    - [Desarrollo](#desarrollo)
+  - [Documentación Adicional](#documentación-adicional)
+    - [Guías Disponibles](#guías-disponibles)
+  - [Seguridad](#seguridad-1)
+  - [Reportar Problemas](#reportar-problemas)
+  - [Soporte](#soporte)
+  - [Licencia](#licencia)
 
 ---
 
@@ -34,7 +52,7 @@
 
 ---
 
-## ✨ Características Principales
+## Características Principales
 
 ### Para Usuarios
 - Registro e inicio de sesión seguro
@@ -338,7 +356,7 @@ Para reportar bugs o sugerir mejoras:
 
 ---
 
-## 📞 Soporte
+## Soporte
 
 Para consultas o soporte:
 - **Email:** jaderdavidaraujoarboleda@gmail.com
