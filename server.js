@@ -1,10 +1,17 @@
 // server.js
+// Cargar variables de entorno
 require('dotenv').config();
+
+// Importar express-async-errors PRIMERO para capturar errores en async/await
+require('express-async-errors');
+
 const express = require('express');
 const path = require('path');
 const ejs = require('ejs');
 const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
 const morgan = require('morgan');
+const pool = require('./src/server/config/db');
 const env = require('./src/server/config/env');
 const { helmetConfig, apiLimiter, authLimiter, sanitizeInput } = require('./src/server/middlewares/security');
 const { setUserLocals, authPages: authPageGuard, adminPages: adminPageGuard } = require('./src/server/middlewares/viewAuth');
@@ -51,9 +58,26 @@ app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'src/client')));
 
 // ========================
-// SESIONES
+// SESIONES PERSISTENTES EN MYSQL
 // ========================
+const sessionStore = new MySQLStore(
+  {
+    expiration: env.SESSION_MAX_AGE || 1000 * 60 * 60 * 24, // 24 horas por defecto
+    createDatabaseTable: true,
+    schema: {
+      tableName: 'sessions',
+      columnNames: {
+        session_id: 'session_id',
+        expires: 'expires',
+        data: 'data'
+      }
+    }
+  },
+  pool
+);
+
 app.use(session({
+  store: sessionStore,
   secret: env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
@@ -61,9 +85,10 @@ app.use(session({
     httpOnly: true,
     sameSite: 'strict',
     secure: env.NODE_ENV === 'production',
-    maxAge: env.SESSION_MAX_AGE
+    maxAge: env.SESSION_MAX_AGE || 1000 * 60 * 60 * 24
   }
 }));
+
 app.use(setUserLocals);
 
 // ========================
@@ -107,6 +132,7 @@ if (require.main === module) {
   app.listen(env.PORT, () => {
     console.log(`✅ Servidor corriendo en http://localhost:${env.PORT}`);
     console.log(`📊 Environment: ${env.NODE_ENV}`);
+    console.log(`💾 Sesiones persistidas en MySQL`);
   });
 }
 

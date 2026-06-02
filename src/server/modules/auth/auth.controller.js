@@ -1,60 +1,53 @@
 // modules/auth/auth.controller.js
 const authService = require('./auth.service');
-const env = require('../../config/env');
 
-const register = async (req, res, next) => {
-  try {
-    const createdUser = await authService.registerUser(req.body);
-    res.status(201).json({ message: 'Usuario registrado exitosamente', userId: createdUser.usuario_id });
-  } catch (error) {
-    next(error);
-  }
+const register = async (req, res) => {
+  const createdUser = await authService.registerUser(req.body);
+  res.status(201).json({
+    success: true,
+    message: 'Usuario registrado exitosamente',
+    data: { usuario_id: createdUser.usuario_id }
+  });
 };
 
-const login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    const result = await authService.loginUser(email, password);
-    const token = result.token;
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await authService.loginUser(email, password);
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: env.NODE_ENV === 'production',
-      maxAge: env.SESSION_MAX_AGE
-    });
+  // Guardar en sesión (sin JWT)
+  req.session.userId = user.usuario_id;
+  req.session.rolId = user.rol_id;
+  req.session.email = user.email;
 
-    if (req.session) {
-      req.session.userId = result.user.usuario_id;
-      req.session.rolId = result.user.rol_id;
-      req.session.email = result.user.email;
+  res.json({
+    success: true,
+    message: 'Sesión iniciada exitosamente',
+    data: user
+  });
+};
+
+const logout = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      res.clearCookie('connect.sid');
+      return res.json({ success: true, message: 'Sesión cerrada' });
     }
-
-    res.json(result);
-  } catch (error) {
-    next(error);
-  }
+    res.clearCookie('connect.sid');
+    res.json({ success: true, message: 'Sesión cerrada exitosamente' });
+  });
 };
 
-const logout = async (req, res) => {
-  if (req.session) {
-    req.session.destroy(() => {
-      res.clearCookie('token');
-      res.json({ message: 'Sesión cerrada exitosamente' });
-    });
-  } else {
-    res.clearCookie('token');
-    res.json({ message: 'Sesión cerrada exitosamente' });
-  }
+const getProfile = async (req, res) => {
+  const profile = await authService.getUserProfile(req.user.usuario_id);
+  res.json({
+    success: true,
+    data: profile
+  });
 };
 
-const getProfile = async (req, res, next) => {
-  try {
-    const profile = await authService.getUserProfile(req.user.usuario_id);
-    res.json(profile);
-  } catch (error) {
-    next(error);
-  }
+module.exports = {
+  register,
+  login,
+  logout,
+  getProfile
 };
-
-module.exports = { register, login, logout, getProfile };

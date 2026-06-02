@@ -1,23 +1,33 @@
 // modules/orders/order.controller.js
 const orderService = require('./order.service');
 
-const checkout = async (req, res, next) => {
-  try {
-    const { direccion_envio } = req.body;
-    const order = await orderService.createOrder(req.user.usuario_id, direccion_envio);
-    res.status(201).json(order);
-  } catch (error) {
-    next(error);
-  }
+const checkout = async (req, res) => {
+  const order = await orderService.createOrder(req.user.usuario_id);
+  res.status(201).json({
+    success: true,
+    message: 'Orden creada exitosamente',
+    data: order
+  });
 };
 
-const getOrders = async (req, res, next) => {
-  try {
-    const orders = await orderService.getUserOrders(req.user.usuario_id);
-    res.json(orders);
-  } catch (error) {
-    next(error);
-  }
+const getOrders = async (req, res) => {
+  const orders = await orderService.getUserOrders(req.user.usuario_id);
+  res.json({
+    success: true,
+    data: orders
+  });
 };
 
-module.exports = { checkout, getOrders };
+const getOrderDetail = async (req, res) => {
+  const order = await orderService.getOrderDetails(req.params.pedido_id, req.user.usuario_id);
+  res.json({
+    success: true,
+    data: order
+  });
+};
+
+module.exports = {
+  checkout,
+  getOrders,
+  getOrderDetail
+};

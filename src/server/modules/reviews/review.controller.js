@@ -1,34 +1,68 @@
+// modules/reviews/review.controller.js
 const reviewService = require('./review.service');
 
-const getReviewsByProduct = async (req, res, next) => {
-  try {
-    const reviews = await reviewService.getReviewsByProduct(req.params.productId);
-    res.json(reviews);
-  } catch (error) {
-    next(error);
-  }
+const getProductReviews = async (req, res) => {
+  const reviews = await reviewService.getProductReviews(req.params.dispositivo_id);
+  res.json({
+    success: true,
+    data: reviews
+  });
 };
 
-const createReview = async (req, res, next) => {
-  try {
-    const usuario_id = req.user?.usuario_id;
-    if (!usuario_id) {
-      return res.status(401).json({ message: 'Debe iniciar sesión para publicar una reseña' });
-    }
-
-    const { productId, calificacion, comentario } = req.body;
-    if (!productId || !calificacion || !comentario) {
-      return res.status(400).json({ message: 'Faltan datos para enviar la reseña' });
-    }
-
-    await reviewService.createReview(usuario_id, productId, calificacion, comentario);
-    res.status(201).json({ message: 'Reseña publicada correctamente' });
-  } catch (error) {
-    next(error);
+const createReview = async (req, res) => {
+  const usuario_id = req.user?.usuario_id;
+  if (!usuario_id) {
+    throw new Error('Debe iniciar sesión para publicar una reseña');
   }
+
+  const { dispositivo_id, calificacion, descripcion } = req.body;
+  const review = await reviewService.createReview(usuario_id, dispositivo_id, calificacion, descripcion);
+
+  res.status(201).json({
+    success: true,
+    message: 'Reseña publicada correctamente',
+    data: review
+  });
+};
+
+const updateReview = async (req, res) => {
+  const usuario_id = req.user?.usuario_id;
+  if (!usuario_id) {
+    throw new Error('Debe iniciar sesión');
+  }
+
+  await reviewService.updateReview(req.params.resenia_id, usuario_id, req.body);
+  res.json({
+    success: true,
+    message: 'Reseña actualizada correctamente'
+  });
+};
+
+const deleteReview = async (req, res) => {
+  const usuario_id = req.user?.usuario_id;
+  if (!usuario_id) {
+    throw new Error('Debe iniciar sesión');
+  }
+
+  await reviewService.deleteReview(req.params.resenia_id, usuario_id);
+  res.json({
+    success: true,
+    message: 'Reseña eliminada correctamente'
+  });
+};
+
+const getProductRating = async (req, res) => {
+  const rating = await reviewService.getProductRating(req.params.dispositivo_id);
+  res.json({
+    success: true,
+    data: rating
+  });
 };
 
 module.exports = {
-  getReviewsByProduct,
-  createReview
+  getProductReviews,
+  createReview,
+  updateReview,
+  deleteReview,
+  getProductRating
 };

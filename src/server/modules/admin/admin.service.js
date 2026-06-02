@@ -1,53 +1,53 @@
-const pool = require('../../config/db');
+// modules/admin/admin.service.js
+const adminRepository = require('./admin.repository');
 
-// === PRODUCTOS ===
-const getAllProducts = async () => {
-    const [rows] = await pool.query(`
-        SELECT d.*, m.nombre as marca_nombre, c.nombre as categoria_nombre, i.cantidadStock as stock
-        FROM dispositivo d
-        LEFT JOIN marca m ON d.marca_id = m.marca_id
-        LEFT JOIN categoria c ON d.categoria_id = c.categoria_id
-        LEFT JOIN inventario_dispositivo idisp ON d.dispositivo_id = idisp.dispositivo_id
-        LEFT JOIN inventario i ON idisp.inventario_id = i.inventario_id
-    `);
-    return rows;
+/**
+ * Obtiene todas las órdenes para administración
+ * @param {Object} filters - Filtros opcionales
+ * @returns {Array} Lista de órdenes
+ */
+const getAllOrders = async (filters = {}) => {
+  const orders = await adminRepository.getAllOrders(filters);
+  return orders;
 };
 
-const createProduct = async (data) => {
-    const { nombre, slug, precio, pathFoto, fechaLanzamiento, marca_id, categoria_id, estado_id, informacionTecnica_id, stock } = data;
-    const connection = await pool.getConnection();
-    try {
-        await connection.beginTransaction();
-        const [res] = await connection.query(
-            `INSERT INTO dispositivo (nombre, slug, precio, pathFoto, fechaLanzamiento, marca_id, categoria_id, estado_id, informacionTecnica_id)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [nombre, slug, precio, pathFoto, fechaLanzamiento, marca_id, categoria_id, estado_id, informacionTecnica_id]
-        );
-        const dispositivo_id = res.insertId;
-        // Inventario
-        const [inv] = await connection.query(
-            `INSERT INTO inventario (fechaActualizacion, cantidadStock, ubicacionAlmacen) VALUES (CURDATE(), ?, 'Principal')`,
-            [stock || 0]
-        );
-        await connection.query(`INSERT INTO inventario_dispositivo (inventario_id, dispositivo_id) VALUES (?, ?)`, [inv.insertId, dispositivo_id]);
-        await connection.commit();
-        return { dispositivo_id };
-    } catch (e) { await connection.rollback(); throw e; }
-    finally { connection.release(); }
+/**
+ * Obtiene estadísticas del dashboard
+ * @returns {Object} Estadísticas generales
+ */
+const getDashboardStats = async () => {
+  const stats = await adminRepository.getDashboardStats();
+  return stats;
 };
 
-const updateProduct = async (id, data) => {
-    await pool.query(`UPDATE dispositivo SET ? WHERE dispositivo_id = ?`, [data, id]);
-    return { dispositivo_id: id };
+/**
+ * Obtiene contactos sin resolver
+ * @returns {Array} Contactos sin resolver
+ */
+const getUnresolvedContacts = async () => {
+  const contacts = await adminRepository.getUnresolvedContacts();
+  return contacts;
 };
 
-const deleteProduct = async (id) => {
-    await pool.query(`DELETE FROM dispositivo WHERE dispositivo_id = ?`, [id]);
+/**
+ * Obtiene órdenes recientes
+ * @param {number} limit - Límite de resultados
+ * @returns {Array} Órdenes recientes
+ */
+const getRecentOrders = async (limit = 10) => {
+  const orders = await adminRepository.getRecentOrders(limit);
+  return orders;
 };
 
-// === CATEGORÍAS ===
-const getAllCategories = () => pool.query('SELECT * FROM categoria');
-const createCategory = (nombre, descripcion) => pool.query('INSERT INTO categoria (nombre, descripcion) VALUES (?, ?)', [nombre, descripcion]);
+/**
+ * Obtiene los productos más vendidos
+ * @param {number} limit - Límite de resultados
+ * @returns {Array} Productos más vendidos
+ */
+const getTopProducts = async (limit = 10) => {
+  const products = await adminRepository.getTopProducts(limit);
+  return products;
+};
 const updateCategory = (id, nombre, descripcion) => pool.query('UPDATE categoria SET nombre=?, descripcion=? WHERE categoria_id=?', [nombre, descripcion, id]);
 const deleteCategory = (id) => pool.query('DELETE FROM categoria WHERE categoria_id=?', [id]);
 

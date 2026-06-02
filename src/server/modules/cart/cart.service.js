@@ -1,49 +1,99 @@
 // modules/cart/cart.service.js
-const pool = require('../../config/db');
+const cartRepository = require('./cart.repository');
+const productRepository = require('../products/product.repository');
 
+/**
+ * Obtiene o crea el carrito de un usuario
+ * @param {number} usuario_id - ID del usuario
+ * @returns {Array} Items en el carrito
+ */
 const getCart = async (usuario_id) => {
-  const [rows] = await pool.query(
-    `SELECT c.carrito_id, c.cantidad, d.dispositivo_id, d.nombre, d.precio, d.pathFoto
-     FROM carrito c
-     JOIN dispositivo d ON c.dispositivo_id = d.dispositivo_id
-     WHERE c.usuario_id = ?`,
-    [usuario_id]
-  );
-  return rows;
-};
-
-const addToCart = async (usuario_id, dispositivo_id, cantidad = 1) => {
-  const [existing] = await pool.query(
-    `SELECT * FROM carrito WHERE usuario_id = ? AND dispositivo_id = ?`,
-    [usuario_id, dispositivo_id]
-  );
-  if (existing.length > 0) {
-    await pool.query(
-      `UPDATE carrito SET cantidad = cantidad + ? WHERE usuario_id = ? AND dispositivo_id = ?`,
-      [cantidad, usuario_id, dispositivo_id]
-    );
-  } else {
-    await pool.query(
-      `INSERT INTO carrito (usuario_id, dispositivo_id, cantidad) VALUES (?, ?, ?)`,
-      [usuario_id, dispositivo_id, cantidad]
-    );
+  let cart = await cartRepository.getCartByUserId(usuario_id);
+  
+  // Si no existe carrito, crearlo
+  if (!cart) {
+    const carrito_id = await cartRepository.createCart(usuario_id);
+    cart = { carrito_id, usuario_id };
   }
-  return { message: 'Producto agregado al carrito' };
+
+  // Obtener items del carrito
+  const items = await cartRepository.getCartItems(cart.carrito_id);
+  return items;
 };
 
-const updateCartItem = async (carrito_id, cantidad) => {
-  await pool.query(`UPDATE carrito SET cantidad = ? WHERE carrito_id = ?`, [cantidad, carrito_id]);
-  return { message: 'Cantidad actualizada' };
+/**
+ * Añade un producto al carrito con validaciones
+ * @param {number} usuario_id - ID del usuario
+ * @param {number} dispositivo_id - ID del dispositivo
+ * @param {number} cantidad - Cantidad a agregar
+ * @throws {Error} Si el producto no existe o no hay stock
+ */
+const addToCart = async (usuario_id, dispositivo_id, cantidad = 1) => {
+  // Validar que el producto exista
+  const product = await productRepository.getProductById(dispositivo_id);
+  if (!product) {
+    throw new Error('Producto no encontrado');
+  }
+
+  // Validar cantidad
+  if (cantidad <= 0) {
+    throw new Error('La cantidad debe ser mayor a 0');
+  }
+
+  // Verificar stock disponible
+  const availableStock = await productRepository.getProductStock(dispositivo_id);
+  if (availableStock < cantidad) {
+    throw new Error(`Stock insuficiente. Disponibles: ${availableStock}`);
+  }
+
+  // Obtener o crear carrito
+  let cart = await cartRepository.getCartByUserId(usuario_id);
+  if (!cart) {
+    const carrito_id = await cartRepository.createCart(usuario_id);
+    cart = { carrito_id };
+  }
+
+  // Añadir item al carrito
+  await cartRepository.addItemToCart(cart.carrito_id, dispositivo_id, cantidad);
 };
 
-const removeFromCart = async (carrito_id) => {
-  await pool.query(`DELETE FROM carrito WHERE carrito_id = ?`, [carrito_id]);
-  return { message: 'Producto eliminado del carrito' };
+/**
+ * Actualiza la cantidad de un item en el carrito
+ * @param {number} carrito_item_id - ID del item en carrito
+ * @param {number} cantidad - Nueva cantidad
+ * @throws {Error} Si la cantidad es inválida o no hay stock
+ */
+const updateCartItem = async (carrito_item_id, cantidad) => {
+  if (cantidad <= 0) {
+    throw new Error('La cantidad debe ser mayor a 0');
+  }
+
+  await cartRepository.updateCartItem(carrito_item_id, cantidad);
 };
 
+/**
+ * Elimina un item del carrito
+ * @param {number} carrito_item_id - ID del item en carrito
+ */
+const removeFromCart = async (carrito_item_id) => {
+  await cartRepository.removeCartItem(carrito_item_id);
+};
+
+/**
+ * Limpia completamente el carrito de un usuario
+ * @param {number} usuario_id - ID del usuario
+ */
 const clearCart = async (usuario_id) => {
-  await pool.query(`DELETE FROM carrito WHERE usuario_id = ?`, [usuario_id]);
-  return { message: 'Carrito vaciado' };
+  const cart = await cartRepository.getCartByUserId(usuario_id);
+  if (cart) {
+    await cartRepository.clearCart(cart.carrito_id);
+  }
 };
 
-module.exports = { getCart, addToCart, updateCartItem, removeFromCart, clearCart };
+module.exports = {
+  getCart,
+  addToCart,
+  updateCartItem,
+  removeFromCart,
+  clearCart
+};

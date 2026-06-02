@@ -1,15 +1,52 @@
-const service = require('./contact.service');
+// modules/contact/contact.controller.js
+const contactService = require('./contact.service');
 
-exports.submitContact = async (req, res, next) => {
-  try {
-    const { nombre, email, telefono, mensaje } = req.body;
-    if (!nombre || !email || !mensaje) {
-      return res.status(400).json({ message: 'Faltan campos obligatorios' });
-    }
+const submitContact = async (req, res) => {
+  const { nombre, email, asunto, mensaje } = req.body;
+  const usuario_id = req.user?.usuario_id || null;
 
-    const result = await service.saveContact(nombre, email, telefono, mensaje);
-    res.status(201).json({ message: 'Mensaje enviado', id: result.contacto_id });
-  } catch (error) {
-    next(error);
-  }
+  const result = await contactService.saveContact({
+    nombre,
+    email,
+    asunto,
+    mensaje,
+    usuario_id
+  });
+
+  res.status(201).json({
+    success: true,
+    message: 'Mensaje enviado correctamente',
+    data: result
+  });
+};
+
+const getContacts = async (req, res) => {
+  const contacts = await contactService.getAllContacts();
+  res.json({
+    success: true,
+    data: contacts
+  });
+};
+
+const getContactDetail = async (req, res) => {
+  const contact = await contactService.getContactById(req.params.contacto_id);
+  res.json({
+    success: true,
+    data: contact
+  });
+};
+
+const resolveContact = async (req, res) => {
+  await contactService.resolveContact(req.params.contacto_id);
+  res.json({
+    success: true,
+    message: 'Contacto marcado como resuelto'
+  });
+};
+
+module.exports = {
+  submitContact,
+  getContacts,
+  getContactDetail,
+  resolveContact
 };
