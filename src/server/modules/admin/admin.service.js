@@ -86,8 +86,8 @@ const updateStock = async (inventario_id, cantidadStock) => {
 };
 
 module.exports = {
-    getAllProducts, createProduct, updateProduct, deleteProduct,
-    getAllCategories, createCategory, updateCategory, deleteCategory,
+    getAllOrders, getDashboardStats, getUnresolvedContacts, getRecentOrders, getTopProducts,
+    updateCategory, deleteCategory,
     getAllBrands, createBrand, updateBrand, deleteBrand,
     getAllUsers, updateUserRole, deleteUser,
     getInventory, updateStock

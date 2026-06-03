@@ -7,5 +7,6 @@ const { authMiddleware } = require('../../middlewares/auth.middleware');
 router.use(authMiddleware);
 router.post('/checkout', controller.checkout);
 router.get('/', controller.getOrders);
+router.get('/:pedido_id', controller.getOrderDetail);
 
 module.exports = router;
