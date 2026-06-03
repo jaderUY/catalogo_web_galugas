@@ -3,11 +3,11 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/login', (req, res) => {
-  res.render('auth/login', { title: 'Iniciar Sesión' });
+  res.render('modules/auth/views/login', { title: 'Iniciar Sesión' });
 });
 
 router.get('/register', (req, res) => {
-  res.render('auth/register', { title: 'Registro' });
+  res.render('modules/auth/views/register', { title: 'Registro' });
 });
 
 module.exports = router;
