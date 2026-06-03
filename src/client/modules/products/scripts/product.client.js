@@ -2,7 +2,8 @@
 async function loadProducts(filters = {}) {
     const queryParams = new URLSearchParams(filters).toString();
     const res = await fetch(`/api/products?${queryParams}`);
-    const products = await res.json();
+    const response = await res.json();
+    const products = response.data || [];
     const container = document.getElementById('productsList');
     if (!container) return;
     if (products.length === 0) {
@@ -26,7 +27,8 @@ async function loadProducts(filters = {}) {
 // Cargar marcas para el filtro
 async function loadBrands() {
     const res = await fetch('/api/products/brands');
-    const brands = await res.json();
+    const response = await res.json();
+    const brands = response.data || [];
     const brandSelect = document.getElementById('brandFilter');
     if (brandSelect) {
         brands.forEach(b => {
