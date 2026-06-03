@@ -127,9 +127,9 @@ app.use(errorHandler);
 // ========================
 if (require.main === module) {
   app.listen(env.PORT, () => {
-    console.log(`✅ Servidor corriendo en http://localhost:${env.PORT}`);
-    console.log(`📊 Environment: ${env.NODE_ENV}`);
-    console.log(`💾 Sesiones persistidas en MySQL`);
+    console.log(`Servidor corriendo en http://localhost:${env.PORT}`);
+    console.log(`Environment: ${env.NODE_ENV}`);
+    console.log(`Sesiones persistidas en MySQL`);
   });
 }
 

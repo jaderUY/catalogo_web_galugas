@@ -3,5 +3,5 @@
     "PATH": "D:\\TOOLs\\NodeJSPortable\\node-v24.14.0-win-x64;${env:PATH}"
   },
   */
-  "git.ignoreLimitWarning": true
+  "git.ignoreLimitWarning": true,
 }

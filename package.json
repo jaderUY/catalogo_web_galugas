@@ -6,8 +6,7 @@
   "author": "jaderUY <jaderdavidaraujoarboleda@gmail.com>",
   "scripts": {
     "stayarnrt": "nodemon server.js",
-    "dev": "nodemon server.js",
-    "test": "jest --runInBand"
+    "dev": "nodemon server.js"
   },
   "license": "MIT",
   "dependencies": {
