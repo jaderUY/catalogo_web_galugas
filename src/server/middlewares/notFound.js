@@ -3,14 +3,18 @@ const notFound = (req, res) => {
   const message = `No encontrado: ${req.method} ${req.path}`;
 
   if (req.accepts('html')) {
-    return res.status(404).render('error', {
+    res.status(404).render('error', {
       title: 'Página no encontrada',
       message: 'La página que buscas no existe.',
-      status: 404
-    }).catch(() => {
-      // Si no puede renderizar, responder con HTML simple
-      res.status(404).send('<h1>404 - Página no encontrada</h1>');
+      status: 404,
+      stack: null
+    }, (err) => {
+      if (err) {
+        // Si no puede renderizar, responder con HTML simple
+        return res.status(404).send('<h1>404 - Página no encontrada</h1>');
+      }
     });
+    return;
   }
 
   res.status(404).json({
