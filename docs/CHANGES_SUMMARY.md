@@ -30,7 +30,6 @@ Cada archivo contiene funciones para consultas SQL específicas del módulo, con
 
 **Líneas clave:**
 ```javascript
-require('express-async-errors');  // Captura errores async automáticamente
 const MySQLStore = require('express-mysql-session')(session);  // Store persistente
 ```
 

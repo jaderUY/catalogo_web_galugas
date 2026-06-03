@@ -70,9 +70,6 @@ npm install express-async-errors express-mysql-session
 ### Cambios en `server.js`
 
 ```javascript
-// ✅ Importar express-async-errors PRIMERO
-require('express-async-errors');
-
 const express = require('express');
 // ... resto del código
 ```

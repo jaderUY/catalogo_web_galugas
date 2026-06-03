@@ -2,9 +2,6 @@
 // Cargar variables de entorno
 require('dotenv').config();
 
-// Importar express-async-errors PRIMERO para capturar errores en async/await
-require('express-async-errors');
-
 const express = require('express');
 const path = require('path');
 const ejs = require('ejs');
